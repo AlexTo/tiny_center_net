@@ -7,12 +7,12 @@ from pycocotools.cocoeval import COCOeval
 import numpy as np
 import json
 import os
-
+from sklearn.model_selection import train_test_split
 import torch.utils.data as data
 
 
 class Tiny(data.Dataset):
-    num_classes = 2
+    num_classes = 1
     default_resolution = [640, 512]
 
     mean = np.array([0.40789654, 0.44719302, 0.47026115],
@@ -29,20 +29,20 @@ class Tiny(data.Dataset):
 
     def __init__(self, opt, split):
         super(Tiny, self).__init__()
-        split = 'train'
-        self.data_dir = os.path.join(opt.data_dir, 'tiny_set')
-        self.img_dir = os.path.join(self.data_dir, f'{split}')
-        self.annot_path = os.path.join(
-            self.data_dir,
-            f'annotations/tiny_set_{split}.json')
-        self.max_objs = 128
-        self.class_name = ['sea_person', 'earth_person']
-        self._valid_ids = [1, 2]
+        self.data_dir = os.path.join(opt.data_dir, 'tiny_set/erase_with_uncertain_dataset')
+        if split == 'train' or split == 'val':
+            self.img_dir = os.path.join(self.data_dir, 'train')
+            self.annot_path = os.path.join(self.data_dir,
+                                           f'annotations/corner/task/tiny_set_train_sw640_sh512_all.json')
+        elif split == 'test':
+            self.img_dir = os.path.join(self.data_dir, 'test')
+            self.annot_path = os.path.join(self.data_dir, f'annotations/tiny_set_test_nobox.json')
+
+        self.max_objs = 200
+        self.class_name = ['person']
+        self._valid_ids = [1]
 
         self.cat_ids = {v: i for i, v in enumerate(self._valid_ids)}
-
-        self.voc_color = [(v // 32 * 64 + 64, (v // 8) % 4 * 64, v % 8 * 32)
-                          for v in range(1, self.num_classes + 1)]
 
         self._data_rng = np.random.RandomState(123)
 
@@ -51,7 +51,17 @@ class Tiny(data.Dataset):
 
         print(f'==> initializing tiny-person {split} data.')
         self.coco = coco.COCO(self.annot_path)
-        self.images = self.coco.getImgIds()
+
+        img_ids = self.coco.getImgIds()
+        train_ids, val_ids = train_test_split(img_ids, test_size=0.2, random_state=123)
+
+        if split == 'train':
+            self.images = train_ids
+        elif split == 'val':
+            self.images = val_ids
+        else:
+            self.images = img_ids
+
         self.num_samples = len(self.images)
 
         print('Loaded {} {} samples'.format(split, self.num_samples))

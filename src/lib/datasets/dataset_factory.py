@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 from datasets.dataset.tiny import Tiny
+from datasets.sample.ctdet_tiny import CTDetTinyDataset
 
 from .sample.ddd import DddDataset
 from .sample.exdet import EXDetDataset
@@ -25,6 +26,7 @@ dataset_factory = {
 _sample_factory = {
     'exdet': EXDetDataset,
     'ctdet': CTDetDataset,
+    'ctdet_tiny': CTDetTinyDataset,
     'ddd': DddDataset,
     'multi_pose': MultiPoseDataset
 }

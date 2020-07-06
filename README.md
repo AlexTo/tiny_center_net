@@ -18,12 +18,20 @@ conda activate CenterNet
 pip install -r requirements.txt
 ```
 
-4 . Have a look at the following file for loading TinyPerson dataset
+4 . Compile DCNv2
 ```
-\src\lib\datasets\dataset\tiny.py
+cd src/lib/models/networks
+git clone https://github.com/CharlesShang/DCNv2
+cd DCNv2
+./make.sh
 ```
 
-5 . Run train 
+5 . Have a look at the following file for loading TinyPerson dataset
+```
+src/lib/datasets/dataset/tiny.py
+```
+
+6 . Run train 
 
 ```
 python src/main.py ctdet --dataset tiny --batch_size 12

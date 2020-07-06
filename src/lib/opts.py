@@ -318,6 +318,11 @@ class opts(object):
                          'wh': 2 if not opt.cat_spec_wh else 2 * opt.num_classes}
             if opt.reg_offset:
                 opt.heads.update({'reg': 2})
+        elif opt.task == 'ctdet_tiny':
+            opt.heads = {'hm': opt.num_classes,
+                         'wh': 2 if not opt.cat_spec_wh else 2 * opt.num_classes}
+            if opt.reg_offset:
+                opt.heads.update({'reg': 2})
         elif opt.task == 'multi_pose':
             # assert opt.dataset in ['coco_hp']
             opt.flip_idx = dataset.flip_idx
@@ -335,6 +340,9 @@ class opts(object):
 
     def init(self, args=''):
         default_dataset_info = {
+            'ctdet_tiny': {'default_resolution': [512, 512], 'num_classes': 1,
+                           'mean': [0.408, 0.447, 0.470], 'std': [0.289, 0.274, 0.278],
+                           'dataset': 'coco'},
             'ctdet': {'default_resolution': [512, 512], 'num_classes': 80,
                       'mean': [0.408, 0.447, 0.470], 'std': [0.289, 0.274, 0.278],
                       'dataset': 'coco'},
