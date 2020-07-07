@@ -53,14 +53,15 @@ class Tiny(data.Dataset):
         self.coco = coco.COCO(self.annot_path)
 
         img_ids = self.coco.getImgIds()
-        train_ids, val_ids = train_test_split(img_ids, test_size=0.2, random_state=123)
+        # train_ids, val_ids = train_test_split(img_ids, test_size=0.2, random_state=123)
+        self.images = img_ids
 
-        if split == 'train':
-            self.images = train_ids
-        elif split == 'val':
-            self.images = val_ids
-        else:
-            self.images = img_ids
+        # if split == 'train':
+        #    self.images = train_ids
+        # elif split == 'val':
+        #    self.images = val_ids
+        # else:
+        #    self.images = img_ids
 
         self.num_samples = len(self.images)
 
