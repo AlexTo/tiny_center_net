@@ -92,7 +92,8 @@ class CtdetTrainer(BaseTrainer):
             cat_spec_wh=opt.cat_spec_wh, K=opt.K)
         dets = dets.detach().cpu().numpy().reshape(1, -1, dets.shape[2])
         dets[:, :, :4] *= opt.down_ratio
-        dets_gt = batch['meta']['gt_det'].numpy().reshape(1, -1, dets.shape[2])
+        # dets_gt = batch['meta']['gt_det'].numpy().reshape(1, -1, dets.shape[2])
+        dets_gt = batch['meta']['gt_det'][batch['mask'] == 1].numpy().reshape(1, -1, dets.shape[2])
         dets_gt[:, :, :4] *= opt.down_ratio
         for i in range(1):
             debugger = Debugger(

@@ -30,10 +30,12 @@ class Tiny(data.Dataset):
     def __init__(self, opt, split):
         super(Tiny, self).__init__()
         self.data_dir = os.path.join(opt.data_dir, 'tiny_set/erase_with_uncertain_dataset')
+
         if split == 'train' or split == 'val':
             self.img_dir = os.path.join(self.data_dir, 'train')
             self.annot_path = os.path.join(self.data_dir,
                                            f'annotations/corner/task/tiny_set_train_sw640_sh512_all.json')
+
         elif split == 'test':
             self.img_dir = os.path.join(self.data_dir, 'test')
             self.annot_path = os.path.join(self.data_dir, f'annotations/tiny_set_test_nobox.json')
@@ -52,16 +54,26 @@ class Tiny(data.Dataset):
         print(f'==> initializing tiny-person {split} data.')
         self.coco = coco.COCO(self.annot_path)
 
-        img_ids = self.coco.getImgIds()
-        # train_ids, val_ids = train_test_split(img_ids, test_size=0.2, random_state=123)
-        self.images = img_ids
+        with open(os.path.join(opt.data_dir, 'tiny_set/erase_with_uncertain_dataset/val.txt'), 'r') as f:
+            val_image_names = [
+                line.replace('data/tiny_set/erase_with_uncertain_dataset/train/', '').strip()
+                for line in f]
 
-        # if split == 'train':
-        #    self.images = train_ids
-        # elif split == 'val':
-        #    self.images = val_ids
-        # else:
-        #    self.images = img_ids
+        imgs = [v for k, v in self.coco.imgs.items()]
+        val_ids = list(map(lambda img: img['id'], list(filter(lambda img: img['file_name'] in val_image_names, imgs))))
+        train_ids = list(
+            map(lambda img: img['id'], list(filter(lambda img: img['file_name'] not in val_image_names, imgs))))
+
+        # img_ids = self.coco.getImgIds()
+        # train_ids, val_ids = train_test_split(img_ids, test_size=0.1, random_state=123)
+        # self.images = img_ids
+
+        if split == 'train':
+            self.images = train_ids
+        elif split == 'val':
+            self.images = val_ids
+        else:
+            self.images = img_ids
 
         self.num_samples = len(self.images)
 

@@ -101,7 +101,8 @@ class CTDetTinyDataset(data.Dataset):
         draw_gaussian = draw_msra_gaussian if self.opt.mse_loss else \
             draw_umich_gaussian
 
-        gt_det = []
+        # gt_det = []
+        gt_det = np.zeros((self.max_objs, 6), dtype=np.float32)
         for k in range(num_objs):
             ann = anns[k]
             bbox = self._coco_box_to_bbox(ann['bbox'])
@@ -129,8 +130,11 @@ class CTDetTinyDataset(data.Dataset):
                 cat_spec_mask[k, cls_id * 2: cls_id * 2 + 2] = 1
                 if self.opt.dense_wh:
                     draw_dense_reg(dense_wh, hm.max(axis=0), ct_int, wh[k], radius)
-                gt_det.append([ct[0] - w / 2, ct[1] - h / 2,
-                               ct[0] + w / 2, ct[1] + h / 2, 1, cls_id])
+
+                # gt_det.append([ct[0] - w / 2, ct[1] - h / 2,
+                #               ct[0] + w / 2, ct[1] + h / 2, 1, cls_id])
+                gt_det[k] = [ct[0] - w / 2, ct[1] - h / 2,
+                             ct[0] + w / 2, ct[1] + h / 2, 1, cls_id]
 
         ret = {'input': inp, 'hm': hm, 'reg_mask': reg_mask, 'ind': ind, 'wh': wh}
         if self.opt.dense_wh:
