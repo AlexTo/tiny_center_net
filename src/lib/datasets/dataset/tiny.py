@@ -64,7 +64,7 @@ class Tiny(data.Dataset):
         train_ids = list(
             map(lambda img: img['id'], list(filter(lambda img: img['file_name'] not in val_image_names, imgs))))
 
-        # img_ids = self.coco.getImgIds()
+        img_ids = self.coco.getImgIds()
         # train_ids, val_ids = train_test_split(img_ids, test_size=0.1, random_state=123)
         # self.images = img_ids
 
