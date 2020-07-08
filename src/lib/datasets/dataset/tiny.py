@@ -37,7 +37,7 @@ class Tiny(data.Dataset):
                                            f'annotations/corner/task/tiny_set_train_sw640_sh512_all.json')
 
         elif split == 'test':
-            self.img_dir = os.path.join(self.data_dir, 'test')
+            self.img_dir = os.path.join(opt.data_dir, 'tiny_set/test')
             self.annot_path = os.path.join(self.data_dir, f'annotations/tiny_set_test_nobox.json')
 
         self.max_objs = 200
