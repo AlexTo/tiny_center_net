@@ -40,8 +40,10 @@ class CTDetTinyDataset(data.Dataset):
 
         img = Image.open(img_path).convert('RGB')
         # img = cv2.imread(img_path)
+
         if 'corner' in img_info:
             img = img.crop(img_info['corner'])
+
         img = np.array(img)
         height, width = img.shape[0], img.shape[1]
         c = np.array([img.shape[1] / 2., img.shape[0] / 2.], dtype=np.float32)

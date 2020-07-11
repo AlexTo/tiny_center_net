@@ -2,26 +2,22 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import _init_paths
-
 import os
-import json
-import cv2
-import numpy as np
-import time
-from progress.bar import Bar
-import torch
 
-from external.nms import soft_nms
-from opts import opts
-from logger import Logger
-from utils.utils import AverageMeter
+import numpy as np
+import torch
+from PIL import Image
 from datasets.dataset_factory import dataset_factory
 from detectors.detector_factory import detector_factory
+from logger import Logger
+from opts import opts
+from progress.bar import Bar
+from utils.utils import AverageMeter
 
 
 class PrefetchDataset(torch.utils.data.Dataset):
-    def __init__(self, opt, dataset, pre_process_func):
+    def __init__(self, opt, dataset, pre_process_func, split):
+        self.split = split
         self.images = dataset.images
         self.load_image_func = dataset.coco.loadImgs
         self.img_dir = dataset.img_dir
@@ -32,7 +28,14 @@ class PrefetchDataset(torch.utils.data.Dataset):
         img_id = self.images[index]
         img_info = self.load_image_func(ids=[img_id])[0]
         img_path = os.path.join(self.img_dir, img_info['file_name'])
-        image = cv2.imread(img_path)
+
+        # image = cv2.imread(img_path)
+        image = Image.open(img_path).convert('RGB')
+        if 'corner' in img_info:
+            image = image.crop(img_info['corner'])
+
+        image = np.array(image)
+
         images, meta = {}, {}
         for scale in opt.test_scales:
             if opt.task == 'ddd':
@@ -56,11 +59,12 @@ def prefetch_test(opt):
     Detector = detector_factory[opt.task]
 
     split = 'val' if not opt.trainval else 'test'
+    # split = 'train'
     dataset = Dataset(opt, split)
     detector = Detector(opt)
 
     data_loader = torch.utils.data.DataLoader(
-        PrefetchDataset(opt, dataset, detector.pre_process),
+        PrefetchDataset(opt, dataset, detector.pre_process, split),
         batch_size=1, shuffle=False, num_workers=1, pin_memory=True)
 
     results = {}
@@ -92,6 +96,7 @@ def test(opt):
     Detector = detector_factory[opt.task]
 
     split = 'val' if not opt.trainval else 'test'
+
     dataset = Dataset(opt, split)
     detector = Detector(opt)
 

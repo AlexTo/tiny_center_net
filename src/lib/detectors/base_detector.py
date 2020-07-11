@@ -114,7 +114,7 @@ class BaseDetector(object):
             pre_time += pre_process_time - scale_start_time
 
             output, dets, forward_time = self.process(images, return_time=True)
-
+            # print(dets)
             torch.cuda.synchronize()
             net_time += forward_time - pre_process_time
             decode_time = time.time()

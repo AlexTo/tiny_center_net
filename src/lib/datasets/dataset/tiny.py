@@ -37,8 +37,8 @@ class Tiny(data.Dataset):
                                            f'annotations/corner/task/tiny_set_train_sw640_sh512_all.json')
 
         elif split == 'test':
-            self.img_dir = os.path.join(opt.data_dir, 'tiny_set/test')
-            self.annot_path = os.path.join(self.data_dir, f'annotations/tiny_set_test_nobox.json')
+            self.img_dir = os.path.join(self.data_dir, 'test')
+            self.annot_path = os.path.join(self.data_dir, f'annotations/tiny_set_test_nobox_cropped.json')
 
         self.max_objs = 200
         self.class_name = ['person']
@@ -64,7 +64,6 @@ class Tiny(data.Dataset):
         train_ids = list(
             map(lambda img: img['id'], list(filter(lambda img: img['file_name'] not in val_image_names, imgs))))
 
-        img_ids = self.coco.getImgIds()
         # train_ids, val_ids = train_test_split(img_ids, test_size=0.1, random_state=123)
         # self.images = img_ids
 
@@ -73,7 +72,7 @@ class Tiny(data.Dataset):
         elif split == 'val':
             self.images = val_ids
         else:
-            self.images = img_ids
+            self.images = self.coco.getImgIds()
 
         self.num_samples = len(self.images)
 
