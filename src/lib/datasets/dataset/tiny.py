@@ -38,7 +38,7 @@ class Tiny(data.Dataset):
 
         elif split == 'test':
             self.img_dir = os.path.join(self.data_dir, 'test')
-            self.annot_path = os.path.join(self.data_dir, f'annotations/tiny_set_test_nobox_cropped.json')
+            self.annot_path = os.path.join(self.data_dir, f'annotations/tiny_set_test_nobox_sw512_sh640.json')
 
         self.max_objs = 200
         self.class_name = ['person']

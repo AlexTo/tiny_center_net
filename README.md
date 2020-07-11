@@ -36,5 +36,20 @@
     ```
 7. Run train 
     ```
-    ctdet_tiny --dataset tiny --batch_size 12 --num_epochs 5 --val_intervals 1
+    python src/main.py ctdet_tiny --dataset tiny --batch_size 12 --num_epochs 5 --val_intervals 1
     ```
+
+8. Generate new COCO file for "tiny_set_test_nobox.json". The new COCO file is to generate sub images by adding "corner" property (similar to the way sub-images are generated in the train annotation file)
+
+    ```
+    python src/split_images.py
+    ```  
+9. Run test 
+    ```
+    python src/test.py ctdet_tiny --dataset tiny --trainval --load_model exp/ctdet_tiny/default/model_100.pth
+    ```
+
+10. The test result is for the new COCO file generated from step 8 so we have to merge it back to the original COCO test file
+   ```
+   python src/merge_results.py
+   ```   
