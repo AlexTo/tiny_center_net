@@ -3,6 +3,8 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 
 import torch
 import torch.utils.data
